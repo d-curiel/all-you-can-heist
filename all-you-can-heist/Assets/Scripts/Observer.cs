@@ -34,13 +34,9 @@ public class Observer : MonoBehaviour
 
             if (Physics.Raycast(ray, out raycastHit))
             {
-                Debug.Log("tag: " + raycastHit.collider.gameObject.tag);
-                Debug.Log("tag: " + raycastHit.collider);
-                Debug.Log("tag 2: " + raycastHit.transform.tag);
-                Debug.Log("compare: " + raycastHit.collider.gameObject.CompareTag("Player"));
                 if (raycastHit.collider.gameObject.CompareTag("Player"))
                 {
-                    Debug.Log("Player Caught");
+                   // Debug.Log("Player Caught");
                 }
             }
         }

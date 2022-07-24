@@ -5,19 +5,24 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField]
+    PlayerData playerData;
+
     PlayerInput playerInput;
     CharacterController characterController;
     Animator animator;
 
     int isWalkingHash;
 
-    Vector2 currentMovementInput;
+    Vector2 currentMovementInput; 
+    Vector3 positionLookAt;
     Vector3 currtentMovement;
     Vector3 appliedMovement;
 
     bool isMovementPressed;
+    bool isActionPressed;
     float rotationFactorPerFrame = 15.0f;
-    float runMultiplier = 8.0f;
+    //float runMultiplier = 8.0f;
     float walkMultiplier = 4.0f;
     float groundedGravity = -0.5f;
     float gravity = -9.8f;
@@ -41,19 +46,26 @@ public class PlayerController : MonoBehaviour
         playerInput.CharacterControls.Move.performed += context => {
             OnMovementInput(context);
         };
+
+        playerInput.CharacterControls.Action.started += context => {
+            OnActionPerformed(context);
+        };
+        playerInput.CharacterControls.Action.canceled += context => {
+            OnActionPerformed(context);
+        };
+
     }
 
-
-    
-
+    void OnActionPerformed(InputAction.CallbackContext context)
+    {
+        isActionPressed = context.ReadValueAsButton();
+    }
 
     void OnMovementInput(InputAction.CallbackContext context)
     {
         currentMovementInput = context.ReadValue<Vector2>();
-        //currtentMovement.x = currentMovementInput.x * runMultiplier;
-       // currtentMovement.z = currentMovementInput.y * runMultiplier;
-        currtentMovement.x = currentMovementInput.x * walkMultiplier;
-        currtentMovement.z = currentMovementInput.y * walkMultiplier;
+        currtentMovement.x = (currentMovementInput.x * walkMultiplier);
+        currtentMovement.z = (currentMovementInput.y * walkMultiplier);
         isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
     }
     void HandleGravity()
@@ -91,7 +103,6 @@ public class PlayerController : MonoBehaviour
 
     void HandleRotation()
     {
-        Vector3 positionLookAt;
         positionLookAt.x = currtentMovement.x;
         positionLookAt.y = 0.0f;
         positionLookAt.z = currtentMovement.z;
@@ -111,7 +122,6 @@ public class PlayerController : MonoBehaviour
             appliedMovement.x = currtentMovement.x;
             appliedMovement.z = currtentMovement.z;
             characterController.Move(appliedMovement * Time.deltaTime);
-
             HandleGravity();
         
     }
@@ -124,4 +134,26 @@ public class PlayerController : MonoBehaviour
         playerInput.CharacterControls.Disable();
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Collectable") && isActionPressed)
+        {
+            playerData.Keys++;
+            other.gameObject.SetActive(false);
+        }
+        if (other.CompareTag("DoorKey") && isActionPressed)
+        {
+            OpenDoor opendoor = other.gameObject.GetComponent<OpenDoor>();
+            if(opendoor != null)
+            {
+                if(playerData.Keys > 0)
+                {
+                    opendoor.Open();
+                } else {
+                    Debug.Log("You need a Key");
+                }
+            }
+
+        }
+    }
 }
