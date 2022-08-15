@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Player Data")]
 public class PlayerData : ScriptableObject
 {
-    private int keys = 1;
+    [SerializeField]
+    private int keys;
+    [SerializeField]
+    private int gold;
     public int Keys { get; set; }
+    public int Gold { get; set; }
 }

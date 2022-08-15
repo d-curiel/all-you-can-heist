@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Collectable
   - DoorKey
+  - Chest
+  - ContextInfo
+  - TrapChest
   layers:
   - Default
   - TransparentFX

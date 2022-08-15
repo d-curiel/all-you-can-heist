@@ -6,6 +6,8 @@ public class Observer : MonoBehaviour
 {
     Transform m_PlayerPosition;
     bool m_IsPlayerInRange;
+    [SerializeField]
+    Transform m_KnigtPosition;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -28,15 +30,15 @@ public class Observer : MonoBehaviour
         if (m_IsPlayerInRange)
         {
             Vector3 direction = m_PlayerPosition.position - transform.position + Vector3.up;
-            Ray ray = new Ray(transform.position, direction);
-            Debug.DrawRay(transform.position, direction, Color.green);
+            Ray ray = new Ray(m_KnigtPosition.position, direction);
+            //Debug.DrawRay(m_KnigtPosition.position, direction, Color.green);
             RaycastHit raycastHit;
 
             if (Physics.Raycast(ray, out raycastHit))
             {
                 if (raycastHit.collider.gameObject.CompareTag("Player"))
                 {
-                   // Debug.Log("Player Caught");
+                    UIManager.Instance.LoseGame();
                 }
             }
         }
